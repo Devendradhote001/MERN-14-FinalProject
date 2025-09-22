@@ -1,0 +1,37 @@
+# Ignore node_modules for both frontend and backend
+backend/node_modules/
+frontend/node_modules/
+
+# Ignore build output for frontend (React)
+frontend/build/
+frontend/dist/
+
+# Ignore build output for backend (if any)
+backend/build/
+backend/dist/
+
+# Ignore environment files
+frontend/.env
+backend/.env
+.env
+
+# Ignore log files for both
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore local VSCode and editor settings
+.vscode/
+.idea/
+*.swp
+
+# Ignore coverage directories (if using testing tools)
+coverage/
+frontend/coverage/
+backend/coverage/
