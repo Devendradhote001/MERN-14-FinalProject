@@ -11,14 +11,14 @@ import {
   Menu,
   LayoutGrid,
 } from "lucide-react";
-import { NavLink as RouterNavLink } from "react-router";
+import { NavLink as RouterNavLink, useLocation } from "react-router";
 
 const navLinks = [
-  { label: "Home", icon: Home, to: "/" },
+  { label: "Home", icon: Home, to: "/home" },
   { label: "Search", icon: Search, to: "/search" },
-  { label: "explore", icon: Compass, to: "/explore" },
+  { label: "explore", icon: Compass, to: "/home/explore" },
   { label: "Reels", icon: SquareStack, to: "/reels" },
-  { label: "messages", icon: Send, to: "/messages" },
+  { label: "messages", icon: Send, to: "/home/messages" },
   { label: "Notifications", icon: Heart, to: "/notifications" },
   { label: "Create", icon: Plus, to: "/create" },
   { label: "Profile", icon: User, to: "/profile" },
@@ -27,15 +27,17 @@ const navLinks = [
 ];
 
 const NavLink = () => {
+  let location = useLocation();
+
   return (
-    <div className="bg-black py-4 w-56 flex flex-col gap-2">
+    <div className="bg-black w-56 flex flex-col gap-2">
       {navLinks.map(({ label, icon: Icon, to }, idx) => (
         <RouterNavLink
           key={label}
           to={to}
           className={({ isActive }) =>
             `group flex items-center gap-4 px-4 py-2 rounded-lg transition-all ${
-              isActive
+              to === location.pathname
                 ? "bg-zinc-800 font-bold text-white"
                 : "text-zinc-200 font-medium hover:bg-zinc-800 hover:text-white"
             }`

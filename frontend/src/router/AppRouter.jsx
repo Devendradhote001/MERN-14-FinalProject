@@ -5,6 +5,7 @@ import HomePage from "../pages/HomePage";
 import HomeLayout from "../layout/HomeLayout";
 import ExplorePage from "../pages/ExplorePage";
 import MessagesPage from "../pages/MessagesPage";
+import MessageLayout from "../layout/MessageLayout";
 
 const AppRouter = () => {
   const router = createBrowserRouter([
@@ -17,7 +18,7 @@ const AppRouter = () => {
       element: <HomeLayout />,
       children: [
         {
-          index: true,
+          path: "",
           element: <HomePage />,
         },
         {
@@ -26,7 +27,13 @@ const AppRouter = () => {
         },
         {
           path: "messages",
-          element: <MessagesPage />,
+          element: <MessageLayout />,
+          children: [
+            {
+              path: "",
+              element: <MessagesPage />,
+            },
+          ],
         },
       ],
     },
