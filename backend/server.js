@@ -1,9 +1,12 @@
 require("dotenv").config();
 const app = require("./src/app");
 const socketIo = require("socket.io");
+const cookieParser = require("cookie-parser");
 const http = require("http");
 const cacheClient = require("./src/services/cache.services");
-const server = http.createServer(app);  
+const server = http.createServer(app);
+
+app.use(cookieParser());
 
 const io = socketIo(server);
 
