@@ -36,9 +36,7 @@ const registerController = async (req, res) => {
         message: "Error in registering user",
       });
 
-    let token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    let token = newUser.JWTTokenGeneration();
 
     res.cookie("token", token);
 
@@ -47,6 +45,7 @@ const registerController = async (req, res) => {
       user: newUser,
     });
   } catch (error) {
+    console.log("error in reg->", error);
     return res.status(500).json({
       message: "Internal server error",
       error: error,
@@ -68,7 +67,7 @@ const loginController = async (req, res) => {
       });
     }
 
-    let decryptPass = await bcrypt.compare(password, user.password);
+    let decryptPass = await user.comparePassword(password);
 
     if (!decryptPass) {
       return res.status(401).json({
@@ -76,9 +75,7 @@ const loginController = async (req, res) => {
       });
     }
 
-    let token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    let token = user.JWTTokenGeneration();
 
     res.cookie("token", token);
 
@@ -87,6 +84,7 @@ const loginController = async (req, res) => {
       user: user,
     });
   } catch (error) {
+    console.log("error in login", error);
     return res.status(500).json({
       message: "Internal server error",
       error: error,
@@ -96,7 +94,7 @@ const loginController = async (req, res) => {
 
 const logoutController = async (req, res) => {
   try {
-    let token = res.cookies.token;
+    let token = req.cookies?.token; // Fix: use req.cookies, not res.cookies
 
     if (!token) {
       return res.status(404).json({
@@ -106,12 +104,13 @@ const logoutController = async (req, res) => {
 
     await cacheClient.set(token, "blacklisted");
 
-    res.clearCookies("token");
+    res.clearCookie("token");
 
     return res.status(200).json({
       message: "user logged out",
     });
   } catch (error) {
+    console.log("error in logout->", error);
     return res.status(500).json({
       message: "Internal server error",
       error: error,
@@ -132,8 +131,6 @@ const forgotPasswordController = async (req, res) => {
         message: "User not found",
       });
     }
-
-    
   } catch (error) {
     return res.status(500).json({
       message: "Internal server error",

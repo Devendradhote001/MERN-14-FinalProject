@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const authMiddleware = async (req, res, next) => {
   try {
-    let token = req.cookies.token;
+    let token = req.cookies?.token;
 
     if (!token) {
       return res.status(404).json({
@@ -32,6 +32,7 @@ const authMiddleware = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
+    console.log("error in auth middleware", error);
     return res.status(500).json({
       message: "Internal server error",
       error: error,
