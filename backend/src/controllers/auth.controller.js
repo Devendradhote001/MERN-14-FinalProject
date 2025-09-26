@@ -2,6 +2,8 @@ const userModel = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const cacheClient = require("../services/cache.services");
+const { emailTemplate } = require("../utils/emailTemplate");
+const { sendMail } = require("../services/mail.services");
 
 const registerController = async (req, res) => {
   try {
@@ -131,7 +133,27 @@ const forgotPasswordController = async (req, res) => {
         message: "User not found",
       });
     }
+
+    let rawToken = jwt.sign({ id: user._id }, process.env.JWT_RAW_SECRET, {
+      expiresIn: "30m",
+    });
+
+    let resetLink = `http://localhost:3000/api/auth/reset-password/${rawToken}`;
+
+    let resetTemplate = emailTemplate({ username: user.username, resetLink });
+
+    let res = await sendMail(
+      "devendradhote179@gmail.com",
+      "Reset password",
+      resetTemplate
+    );
+
+    console.log(res);
+
+    return res.send("ok");
   } catch (error) {
+    console.log("error in fp->", error);
+
     return res.status(500).json({
       message: "Internal server error",
       error: error,
@@ -143,4 +165,5 @@ module.exports = {
   registerController,
   loginController,
   logoutController,
+  forgotPasswordController,
 };

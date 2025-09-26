@@ -1,25 +1,20 @@
-const nodemailer = require("nodemailer");
+import nodemailer from "nodemailer";
 
-// Create a test account or replace with real credentials.
 const transporter = nodemailer.createTransport({
-  host: "ddhote780@gmail.com",
-  port: 587,
-  secure: false, // true for 465, false for other ports
+  service: "gmail",
   auth: {
-    user: "maddison53@ethereal.email",
-    pass: "jn7jnAPss4f63QBp6D", 
+    user: "ddhote780@gmail.com",
+    pass: "lxbtuydurvqjqulp",
   },
 });
 
-// Wrap in an async IIFE so we can use await.
-(async () => {
-  const info = await transporter.sendMail({
-    from: '"Maddison Foo Koch" <maddison53@ethereal.email>',
-    to: "bar@example.com, baz@example.com",
-    subject: "Hello ✔",
-    text: "Hello world?", // plain‑text body
-    html: "<b>Hello world?</b>", // HTML body
-  });
+export const sendMail = async (to, subject, htmlContent) => {
+  let info = {
+    from: "ddhote780@gmail",
+    to,
+    subject,
+    html: htmlContent,
+  };
 
-  console.log("Message sent:", info.messageId);
-})();
+  return await transporter.sendMail(info);
+};
