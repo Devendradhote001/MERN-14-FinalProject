@@ -7,6 +7,7 @@ const {
 } = require("../controllers/auth.controller");
 const jwt = require("jsonwebtoken");
 const authMiddleware = require("../middlewares/auth.middleware");
+const UserModel = require("../models/user.model");
 
 const router = express.Router();
 
@@ -23,13 +24,35 @@ router.get("/reset-password/:token", (req, res) => {
   res.render("index.ejs", { user_id: decode.id });
 });
 
-router.post("/update-password/:id", (req, res) => {
-  let id = req.params.id;
-  let password = req.body.password;
+router.post("/update-password/:id", async (req, res) => {
+  try {
+    let id = req.params.id;
+    let password = req.body.password;
+    console.log(password);
 
-  console.log("user password", password, id);
+    if (!id)
+      return res.status(404).json({
+        message: "Bad request",
+      });
 
-  return res.send("ok");
+    let updateUser = await UserModel.findByIdAndUpdate(
+      { _id: id },
+      {
+        password,
+      }
+    );
+
+    return res.status(200).json({
+      message: "Password updated",
+      user: updateUser,
+    });
+  } catch (error) {
+    console.log("error in update pass - >", error);
+    return res.status(500).json({
+      message: "internal server error",
+      error: error,
+    });
+  }
 });
 
 router.post("/register", registerController);
