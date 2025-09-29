@@ -7,6 +7,7 @@ const { sendMail } = require("../services/mail.services");
 
 const registerController = async (req, res) => {
   try {
+    console.log("----->", req.body);
     let { fullName, username, email, password, mobile } = req.body;
 
     if (!fullName || !username || !email || !password || !mobile) {
@@ -57,6 +58,7 @@ const registerController = async (req, res) => {
 
 const loginController = async (req, res) => {
   try {
+    console.log("--->", req.body);
     let { email, mobile, username, password } = req.body;
 
     let user = await userModel.findOne({
@@ -69,7 +71,9 @@ const loginController = async (req, res) => {
       });
     }
 
-    let decryptPass = await user.comparePassword(password);
+    console.log("users->", user);
+
+    let decryptPass = await bcrypt.compare(password, user.password);
 
     if (!decryptPass) {
       return res.status(401).json({

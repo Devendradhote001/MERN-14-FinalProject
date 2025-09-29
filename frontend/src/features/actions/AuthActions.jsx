@@ -1,6 +1,6 @@
-const { axiosIntance } = require("../../config/axiosInstance");
+import { axiosIntance } from "../../config/axiosInstance";
 
-const fetchRegisterThunk = (data) => async (dispatch) => {
+export const fetchRegisterApi = (data) => async (dispatch) => {
   try {
     let response = await axiosIntance.post("/auth/register", data);
     if (response) {
@@ -8,5 +8,16 @@ const fetchRegisterThunk = (data) => async (dispatch) => {
     }
   } catch (error) {
     console.log("error in registration", error);
+  }
+};
+
+export const loginUserApi = (data) => async (dispatch) => {
+  try {
+    let response = await axiosIntance.post("/auth/login", data);
+    if (response) {
+      console.log(response);
+    }
+  } catch (error) {
+    console.log("error in login", error);
   }
 };
