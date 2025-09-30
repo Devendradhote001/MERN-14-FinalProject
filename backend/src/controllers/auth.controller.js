@@ -10,14 +10,15 @@ const registerController = async (req, res) => {
     console.log("----->", req.body);
     let { fullName, username, email, password, mobile } = req.body;
 
-    if (!fullName || !username || !email || !password || !mobile) {
+    if (!fullName || !username || !email || !password) {
       return res.status(422).json({
         message: "All fields are required",
       });
     }
 
     let existingUser = await userModel.findOne({
-      $or: [{ email }, { mobile }, { username }],
+      // $or: [{ email }, { mobile }, { username }],
+      email,
     });
 
     if (existingUser) {

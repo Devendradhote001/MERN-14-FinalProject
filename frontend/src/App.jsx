@@ -1,7 +1,22 @@
-import React from "react";
+import React, { useEffect } from "react";
 import AppRouter from "./router/AppRouter";
+import { axiosIntance } from "./config/axiosInstance";
+import { useDispatch } from "react-redux";
+import { addUser } from "./features/reducers/authSlice";
+import { useNavigate } from "react-router";
 
 const App = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    (async () => {
+      let res = await axiosIntance.get("/auth/me");
+      if (res) {
+        dispatch(addUser(res.data.user));
+      }
+    })();
+  }, [dispatch]);
+
   return (
     <div className="h-screen w-screen bg-black">
       <AppRouter />

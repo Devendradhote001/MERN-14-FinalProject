@@ -15,12 +15,10 @@ const userSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      required: true,
       unique: true,
     },
     mobile: {
       type: String,
-      required: true,
       unique: true,
       minlength: 10,
       maxlength: 10,
@@ -30,6 +28,24 @@ const userSchema = new mongoose.Schema(
       required: true,
       minlength: 8,
     },
+    blockedUsers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user",
+      },
+    ],
+    followers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user",
+      },
+    ],
+    following: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user",
+      },
+    ],
     posts: [
       {
         type: mongoose.Schema.Types.ObjectId,

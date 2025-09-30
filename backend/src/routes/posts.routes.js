@@ -6,6 +6,8 @@ const {
   deletePostController,
   updatePostController,
   getPostOfLoggedInUser,
+  likesController,
+  unLikesController,
 } = require("../controllers/posts.controllers");
 const upload = require("../config/multer");
 
@@ -25,5 +27,9 @@ router.get("/allPosts", authMiddleware, getAllPostsController);
 router.get("/user-posts", authMiddleware, getPostOfLoggedInUser);
 
 router.get("/delete/:post_id", authMiddleware, deletePostController);
+
+router.get("/like/:post_id", authMiddleware, likesController);
+
+router.get("/unlike/:post_id", authMiddleware, unLikesController);
 
 module.exports = router;

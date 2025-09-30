@@ -11,6 +11,13 @@ const UserModel = require("../models/user.model");
 
 const router = express.Router();
 
+router.get("/me", authMiddleware, (req, res) => {
+  return res.status(200).json({
+    message: "Cuurent loggedin user",
+    user: req.user,
+  });
+});
+
 router.get("/reset-password/:token", (req, res) => {
   let token = req.params.token;
 

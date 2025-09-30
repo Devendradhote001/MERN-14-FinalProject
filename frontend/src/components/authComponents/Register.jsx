@@ -1,16 +1,25 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import { userRegisterApi } from "../../features/actions/AuthActions";
+import { useDispatch } from "react-redux";
 
 const Register = ({ setToggle }) => {
+  const dispatch = useDispatch();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    // handle registration logic here
-    console.log(data);
+  const onSubmit = async (data) => {
+    try {
+      let res = dispatch(userRegisterApi(data));
+      if (res) {
+        console.log("okk from reg");
+      }
+    } catch (error) {
+      console.log("error while registering user", error);
+    }
   };
 
   return (
@@ -47,7 +56,7 @@ const Register = ({ setToggle }) => {
           <input
             className="bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-white placeholder-zinc-400 focus:outline-none focus:border-blue-500"
             placeholder="Mobile Number or Email"
-            {...register("emailOrMobile", { required: "Required" })}
+            {...register("email", { required: "Required" })}
           />
           {errors.emailOrMobile && (
             <span className="text-red-500 text-xs">
@@ -70,7 +79,7 @@ const Register = ({ setToggle }) => {
           <input
             className="bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-white placeholder-zinc-400 focus:outline-none focus:border-blue-500"
             placeholder="Full Name"
-            {...register("fullname", { required: "Required" })}
+            {...register("fullName", { required: "Required" })}
           />
           {errors.fullname && (
             <span className="text-red-500 text-xs">
