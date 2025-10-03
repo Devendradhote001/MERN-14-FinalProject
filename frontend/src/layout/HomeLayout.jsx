@@ -27,7 +27,7 @@ const HomeLayout = () => {
         </div>
         <NavLink />
       </aside>
-      <div className="h-full w-[80%]">
+      <div className="h-screen w-[80%]">
         <Outlet />
       </div>
     </div>

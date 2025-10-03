@@ -9,10 +9,10 @@ const AuthLayout = () => {
   const { user, isLoggedin } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (user) {
+    if (user !== null && isLoggedin) {
       navigate("/home");
     }
-  }, [user]);
+  }, [user, isLoggedin]);
 
   const [toggle, setToggle] = useState(true);
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Home,
   Search,
@@ -11,7 +11,13 @@ import {
   Menu,
   LayoutGrid,
 } from "lucide-react";
-import { NavLink as RouterNavLink, useLocation } from "react-router";
+import {
+  NavLink as RouterNavLink,
+  useLocation,
+  useNavigate,
+} from "react-router";
+import { useDispatch } from "react-redux";
+import { logoutUserApi } from "../../features/actions/AuthActions";
 
 const navLinks = [
   { label: "Home", icon: Home, to: "/home" },
@@ -23,11 +29,29 @@ const navLinks = [
   { label: "Create", icon: Plus, to: "/create" },
   { label: "Profile", icon: User, to: "/profile" },
   { label: "More", icon: Menu, to: "/more" },
-  { label: "Also from Meta", icon: LayoutGrid, to: "/meta" },
 ];
 
 const NavLink = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [loggedOut, setLoggedOut] = useState(false);
   let location = useLocation();
+
+  let logoutUSer = async () => {
+    try {
+      dispatch(logoutUserApi());
+      alert("User logged out");
+    } catch (error) {
+      console.log("Error while logout user api");
+    }
+  };
+
+  useEffect(() => {
+    if (loggedOut) {
+      navigate("/");
+      logoutUSer();
+    }
+  }, [loggedOut]);
 
   return (
     <div className="bg-black w-56 flex flex-col gap-2">
@@ -56,6 +80,13 @@ const NavLink = () => {
           )}
         </RouterNavLink>
       ))}
+
+      <button
+        onClick={() => setLoggedOut(true)}
+        className={"text-white cursor-pointer"}
+      >
+        Logout
+      </button>
     </div>
   );
 };

@@ -78,6 +78,17 @@ const Register = ({ setToggle }) => {
 
           <input
             className="bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-white placeholder-zinc-400 focus:outline-none focus:border-blue-500"
+            placeholder="Mobile"
+            {...register("mobile", { required: "Required" })}
+          />
+          {errors.mobile && (
+            <span className="text-red-500 text-xs">
+              {errors.mobile.message}
+            </span>
+          )}
+
+          <input
+            className="bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-white placeholder-zinc-400 focus:outline-none focus:border-blue-500"
             placeholder="Full Name"
             {...register("fullName", { required: "Required" })}
           />

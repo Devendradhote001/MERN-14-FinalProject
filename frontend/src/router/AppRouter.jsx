@@ -7,6 +7,7 @@ import ExplorePage from "../pages/ExplorePage";
 import MessagesPage from "../pages/MessagesPage";
 import MessageLayout from "../layout/MessageLayout";
 import { useSelector } from "react-redux";
+import ProtectedRoute from "../components/authComponents/ProtectedRoute";
 
 const AppRouter = () => {
   const router = createBrowserRouter([
@@ -16,23 +17,29 @@ const AppRouter = () => {
     },
     {
       path: "/home",
-      element: <HomeLayout />,
+      element: <ProtectedRoute />,
       children: [
         {
           path: "",
-          element: <HomePage />,
-        },
-        {
-          path: "explore",
-          element: <ExplorePage />,
-        },
-        {
-          path: "messages",
-          element: <MessageLayout />,
+          element: <HomeLayout />,
           children: [
             {
               path: "",
-              element: <MessagesPage />,
+              element: <HomePage />,
+            },
+            {
+              path: "explore",
+              element: <ExplorePage />,
+            },
+            {
+              path: "messages",
+              element: <MessageLayout />,
+              children: [
+                {
+                  path: "",
+                  element: <MessagesPage />,
+                },
+              ],
             },
           ],
         },
