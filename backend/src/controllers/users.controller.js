@@ -86,8 +86,6 @@ const getAllUsersController = async (req, res) => {
 
     let allUsers = await UserModel.find({ _id: { $ne: currentUser } });
 
-    console.log(allUsers);
-
     return res.status(200).json({
       message: "fetched all users",
       allUsers: allUsers,

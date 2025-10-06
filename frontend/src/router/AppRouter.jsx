@@ -36,7 +36,7 @@ const AppRouter = () => {
               element: <MessageLayout />,
               children: [
                 {
-                  path: "",
+                  path: "chat/:id/:name",
                   element: <MessagesPage />,
                 },
               ],

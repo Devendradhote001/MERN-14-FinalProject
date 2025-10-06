@@ -1,13 +1,12 @@
-const userModel = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const cacheClient = require("../services/cache.services");
 const { emailTemplate } = require("../utils/emailTemplate");
 const { sendMail } = require("../services/mail.services");
+const UserModel = require("../models/user.model");
 
 const registerController = async (req, res) => {
   try {
-    console.log("----->", req.body);
     let { fullName, username, email, password, mobile } = req.body;
 
     if (!fullName || !username || !email || !password) {
@@ -16,8 +15,8 @@ const registerController = async (req, res) => {
       });
     }
 
-    let existingUser = await userModel.findOne({
-      // $or: [{ email }, { mobile }, { username }],
+    let existingUser = await UserModel.findOne({
+      $or: [{ email }, { mobile }, { username }],
       email,
     });
 
@@ -27,7 +26,7 @@ const registerController = async (req, res) => {
       });
     }
 
-    let newUser = await userModel.create({
+    let newUser = await UserModel.create({
       fullName,
       username,
       email,
@@ -59,20 +58,18 @@ const registerController = async (req, res) => {
 
 const loginController = async (req, res) => {
   try {
-    console.log("--->", req.body);
     let { email, mobile, username, password } = req.body;
 
-    let user = await userModel.findOne({
-      $or: [{ mobile }, { email }, { username }],
+    let user = await UserModel.findOne({
+      email,
     });
+
 
     if (!user) {
       return res.status(404).json({
         message: "User not found",
       });
     }
-
-    console.log("users->", user);
 
     let decryptPass = await bcrypt.compare(password, user.password);
 
@@ -152,8 +149,6 @@ const forgotPasswordController = async (req, res) => {
       "Reset password",
       resetTemplate
     );
-
-    console.log(res);
 
     return res.send("ok");
   } catch (error) {

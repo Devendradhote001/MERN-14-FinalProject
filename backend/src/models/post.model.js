@@ -28,11 +28,17 @@ const postSchema = new mongoose.Schema(
         ref: "user",
       },
     ],
+    expiresAt: {
+      type: Date,
+      default: () => Date.now() + 24 * 60 * 60 * 1000, // expires after 24 hrs
+    },
   },
   {
     timestamps: true,
   }
 );
+
+postSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 const PostModel = mongoose.model("posts", postSchema);
 module.exports = PostModel;

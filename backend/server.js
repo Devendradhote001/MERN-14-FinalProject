@@ -5,13 +5,24 @@ const http = require("http");
 const cacheClient = require("./src/services/cache.services");
 const connectDB = require("./src/config/db/db");
 const server = http.createServer(app);
+const cors = require("cors");
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 connectDB();
 
-
-
-
-const io = socketIo(server);
+const io = socketIo(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
 
 cacheClient.on("connect", () => {
   console.log("Redis connected successfully");

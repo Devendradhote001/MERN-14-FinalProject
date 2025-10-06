@@ -1,6 +1,34 @@
 import React from "react";
+import { axiosIntance } from "../../config/axiosInstance";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 
 const FollowCard = ({ elem }) => {
+  const navigate = useNavigate();
+  let { user } = useSelector((state) => state.auth);
+
+  const handleFollow = async () => {
+    try {
+      let response = await axiosIntance.get(`/users/follow/${elem._id}`);
+      if (response) {
+        navigate("/home");
+      }
+    } catch (error) {
+      console.log("error while following user", error);
+    }
+  };
+
+  const handleUnfollow = async () => {
+    try {
+      let response = await axiosIntance.get(`/users/unfollow/${elem._id}`);
+      if (response) {
+        navigate("/home");
+      }
+    } catch (error) {
+      console.log("error while following user", error);
+    }
+  };
+
   return (
     <div className="flex justify-between items-center gap-4">
       <div className="h-11 w-11 rounded-full border border-white overflow-hidden">
@@ -16,9 +44,21 @@ const FollowCard = ({ elem }) => {
       </div>
 
       <div>
-        <button className="bg-blue-500 text-white px-4 py-1 rounded-md cursor-pointer">
-          Follow
-        </button>
+        {user.following.includes(elem._id) ? (
+          <button
+            onClick={handleUnfollow}
+            className="bg-blue-500 text-white px-4 py-1 rounded-md cursor-pointer"
+          >
+            Unfollow
+          </button>
+        ) : (
+          <button
+            onClick={handleFollow}
+            className="bg-blue-500 text-white px-4 py-1 rounded-md cursor-pointer"
+          >
+            Follow
+          </button>
+        )}
       </div>
     </div>
   );

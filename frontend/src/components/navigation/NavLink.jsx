@@ -34,24 +34,17 @@ const navLinks = [
 const NavLink = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [loggedOut, setLoggedOut] = useState(false);
   let location = useLocation();
 
   let logoutUSer = async () => {
     try {
       dispatch(logoutUserApi());
       alert("User logged out");
+      navigate("/");
     } catch (error) {
       console.log("Error while logout user api");
     }
   };
-
-  useEffect(() => {
-    if (loggedOut) {
-      navigate("/");
-      logoutUSer();
-    }
-  }, [loggedOut]);
 
   return (
     <div className="bg-black w-56 flex flex-col gap-2">
@@ -81,10 +74,7 @@ const NavLink = () => {
         </RouterNavLink>
       ))}
 
-      <button
-        onClick={() => setLoggedOut(true)}
-        className={"text-white cursor-pointer"}
-      >
+      <button onClick={logoutUSer} className={"text-white cursor-pointer"}>
         Logout
       </button>
     </div>
