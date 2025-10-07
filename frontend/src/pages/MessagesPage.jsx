@@ -1,20 +1,62 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router";
 import { Plus } from "lucide-react";
 import { io } from "socket.io-client";
+import { useSelector } from "react-redux";
 
 const MessagesPage = () => {
-  const [messages, setMessages] = useState(null);
-  const [sendMsg, setSendMsg] = useState(null);
-  const socket = io("http://localhost:3000");
-  console.log("socket---->", socket);
+  const [messages, setMessages] = useState("");
+  const [socket_id, setSocket_id] = useState(null);
+  console.log("your socket id", socket_id);
+  const { user } = useSelector((state) => state.auth);
+  const [sendMsg, setSendMsg] = useState("");
+  const socket = useMemo(() => io("http://localhost:3000"), []);
   const { id, name } = useParams();
 
+  const chatUsers = {
+    roomId: [user._id, id].sort().join("_"),
+    sender_id: user._id,
+    receiver_id: id,
+    socket_id,
+  };
+
   useEffect(() => {
-    if (messages !== null) {
-      socket.emit("chat", messages);
-    }
-  }, [sendMsg]);
+    socket.on("connect", () => {
+      console.log("connected with socket");
+    });
+
+    socket.on("take_SID", (SID) => {
+      setSocket_id(SID);
+    });
+
+    return () => {
+      socket.on("disconnect", () => {
+        console.log("user disconnected");
+      });
+    };
+  }, []);
+
+  useEffect(() => {
+    socket.emit("join-room", chatUsers);
+  }, [socket_id]);
+
+  socket.on("receive-msg", (msg) => {
+    console.log("from server", msg.text);
+  });
+
+  const handleSendMsgs = () => {
+    if (messages.trim() === "") return;
+
+    let newMsg = {
+      sender_id: user._id,
+      receiver_id: id,
+      text: messages,
+      roomId: chatUsers.roomId,
+    };
+
+    socket.emit("send-msg", newMsg);
+    setMessages("");
+  };
 
   return (
     <div className="text-white flex flex-col justify-between h-full">
@@ -42,10 +84,7 @@ const MessagesPage = () => {
           className="border rounded-full px-6 py-2 w-[75%]"
         />
         <button
-          onClick={() => {
-            setSendMsg(messages);
-            alert("message send");
-          }}
+          onClick={handleSendMsgs}
           className="px-4 py-2 bg-zinc-800 text-white rounded-md"
         >
           Send

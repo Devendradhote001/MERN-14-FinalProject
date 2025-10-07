@@ -10,15 +10,19 @@ const App = () => {
 
   useEffect(() => {
     (async () => {
-      let res = await axiosIntance.get("/auth/me");
-      if (res) {
-        dispatch(addUser(res.data.user));
+      try {
+        let res = await axiosIntance.get("/auth/me");
+        if (res) {
+          dispatch(addUser(res.data.user));
+        }
+      } catch (error) {
+        console.log("error in app /me api", error);
       }
     })();
   }, [dispatch]);
 
   return (
-    <div className="h-screen w-screen bg-black">
+    <div className="min-h-screen w-screen bg-black">
       <AppRouter />
     </div>
   );

@@ -4,7 +4,7 @@ import NavLink from "../components/navigation/NavLink";
 
 const HomeLayout = () => {
   return (
-    <div className="h-screen w-full flex">
+    <div className="min-h-screen w-full flex">
       <aside className="w-[20%] h-full flex flex-col items-center border border-r-zinc-700">
         <div className="py-[20%] px-[10%]">
           <svg

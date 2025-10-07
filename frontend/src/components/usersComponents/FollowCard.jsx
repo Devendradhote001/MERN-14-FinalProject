@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { axiosIntance } from "../../config/axiosInstance";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
@@ -6,12 +6,14 @@ import { useNavigate } from "react-router";
 const FollowCard = ({ elem }) => {
   const navigate = useNavigate();
   let { user } = useSelector((state) => state.auth);
+  const [follow, setFollow] = useState(false);
 
   const handleFollow = async () => {
     try {
       let response = await axiosIntance.get(`/users/follow/${elem._id}`);
       if (response) {
         navigate("/home");
+        setFollow(true);
       }
     } catch (error) {
       console.log("error while following user", error);
@@ -23,6 +25,7 @@ const FollowCard = ({ elem }) => {
       let response = await axiosIntance.get(`/users/unfollow/${elem._id}`);
       if (response) {
         navigate("/home");
+        setFollow(false);
       }
     } catch (error) {
       console.log("error while following user", error);
@@ -44,17 +47,17 @@ const FollowCard = ({ elem }) => {
       </div>
 
       <div>
-        {user.following.includes(elem._id) ? (
+        {follow ? (
           <button
             onClick={handleUnfollow}
-            className="bg-blue-500 text-white px-4 py-1 rounded-md cursor-pointer"
+            className="bg-gray-300 text-gray-700 px-4 py-1 rounded-md cursor-pointer hover:bg-gray-400 transition"
           >
             Unfollow
           </button>
         ) : (
           <button
             onClick={handleFollow}
-            className="bg-blue-500 text-white px-4 py-1 rounded-md cursor-pointer"
+            className="bg-blue-500 text-white px-4 py-1 rounded-md cursor-pointer hover:bg-blue-600 transition"
           >
             Follow
           </button>
