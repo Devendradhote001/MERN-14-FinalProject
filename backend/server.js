@@ -6,6 +6,7 @@ const cacheClient = require("./src/services/cache.services");
 const connectDB = require("./src/config/db/db");
 const server = http.createServer(app);
 const cors = require("cors");
+const MessageModel = require("./src/models/message.model");
 
 app.use(
   cors({
@@ -41,19 +42,26 @@ io.on("connection", (socket) => {
 
   socket.on("join-room", (chatUsers) => {
     socket.join(chatUsers.roomId);
+
     if (chatUsers.socket_id) {
       onlineUsers.push(chatUsers.socket_id);
     }
-    console.log("for my tracking purpose", onlineUsers);
     console.log(" user join with room id", chatUsers.roomId);
   });
 
-  socket.on("send-msg", (msg) => {
+  socket.on("send-msg", async (msg) => {
     console.log("incoming-msg", msg);
 
-    if (onlineUsers.length === 2) {
-      io.to(msg.roomId).emit("receive-msg", msg);
+    if (msg) {
+      let newMessage = await MessageModel.create({
+        sender_id: msg.sender_id,
+        receiver_id: msg.receiver_id,
+        room_id: msg.roomId,
+        content: msg.text,
+      });
     }
+
+    io.to(msg.roomId).emit("receive-msg", msg);
   });
 
   socket.on("chat", (msg) => {
