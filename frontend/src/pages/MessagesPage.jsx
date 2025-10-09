@@ -5,13 +5,14 @@ import { io } from "socket.io-client";
 import { useSelector } from "react-redux";
 
 const MessagesPage = () => {
+  const [allMessages, setAllMessages] = useState([]);
+  console.log("all mesgs--->", allMessages);
   const [messages, setMessages] = useState("");
   const [socket_id, setSocket_id] = useState(null);
   console.log("your socket id", socket_id);
   const { user } = useSelector((state) => state.auth);
-  const [sendMsg, setSendMsg] = useState("");
-  const socket = useMemo(() => io("http://localhost:3000"), []);
   const { id, name } = useParams();
+  const socket = useMemo(() => io("http://localhost:3000"), [id]);
 
   const chatUsers = {
     roomId: [user._id, id].sort().join("_"),
@@ -21,28 +22,47 @@ const MessagesPage = () => {
   };
 
   useEffect(() => {
-    socket.on("connect", () => {
+    const handleConnect = () => {
       console.log("connected with socket");
-    });
+    };
 
-    socket.on("take_SID", (SID) => {
+    const handleTakeSID = (SID) => {
       setSocket_id(SID);
-    });
+    };
+
+    socket.on("connect", handleConnect);
+    socket.on("take_SID", handleTakeSID);
 
     return () => {
-      socket.on("disconnect", () => {
-        console.log("user disconnected");
-      });
+      socket.off("connect", handleConnect);
+      socket.off("take_SID", handleTakeSID);
+      socket.disconnect();
     };
-  }, []);
+  }, [socket]);
 
   useEffect(() => {
-    socket.emit("join-room", chatUsers);
-  }, [socket_id]);
+    const handleReceiveMsg = (msg) => {
+      setAllMessages((prev) => [...prev, msg]);
+    };
 
-  socket.on("receive-msg", (msg) => {
-    console.log("from server", msg.text);
-  });
+    const handleLoadOldMessages = (messages) => {
+      setAllMessages(messages);
+    };
+
+    socket.on("receive-msg", handleReceiveMsg);
+    socket.on("load-old-messages", handleLoadOldMessages);
+
+    return () => {
+      socket.off("receive-msg", handleReceiveMsg);
+      socket.off("load-old-messages", handleLoadOldMessages);
+    };
+  }, [socket]);
+
+  useEffect(() => {
+    if (!socket_id) return;
+
+    socket.emit("join-room", chatUsers);
+  }, [socket_id, socket]);
 
   const handleSendMsgs = () => {
     if (messages.trim() === "") return;
@@ -56,6 +76,7 @@ const MessagesPage = () => {
 
     socket.emit("send-msg", newMsg);
     setMessages("");
+    // Do NOT update allMessages here; let the socket event handle it
   };
 
   return (
@@ -71,7 +92,11 @@ const MessagesPage = () => {
         <h1 className="capitalize font-bold text-xl">{name}</h1>
       </div>
 
-      <div className="">messages here</div>
+      <div className="">
+        {allMessages.map((elem, i) => {
+          return <li key={i}>{elem.content}</li>;
+        })}
+      </div>
       <div className="flex gap-4">
         <div className="h-12 w-12 rounded-full bg-zinc-800 flex justify-center items-center cursor-pointer">
           <Plus />

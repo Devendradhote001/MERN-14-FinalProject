@@ -23,7 +23,9 @@ const HomePage = () => {
 
   return (
     <div className="text-white flex">
-      <div className="w-[70%] h-[100%] bg-green-300">Home feed</div>
+      <div className="w-[70%] min-h-screen p-4">
+        <div className="h-[20%] w-full bg-zinc-500">Stories</div>
+      </div>
 
       <div className="px-4 py-10 flex flex-col gap-5">
         <h1>Suggested for you</h1>

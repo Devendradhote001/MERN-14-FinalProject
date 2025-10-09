@@ -40,28 +40,32 @@ io.on("connection", (socket) => {
 
   socket.emit("take_SID", socket.id);
 
-  socket.on("join-room", (chatUsers) => {
+  socket.on("join-room", async (chatUsers) => {
     socket.join(chatUsers.roomId);
 
     if (chatUsers.socket_id) {
       onlineUsers.push(chatUsers.socket_id);
     }
+
+    let restMessages = await MessageModel.find({ room_id: chatUsers.roomId });
+
     console.log(" user join with room id", chatUsers.roomId);
+
+    socket.emit("load-old-messages", restMessages);
   });
 
   socket.on("send-msg", async (msg) => {
     console.log("incoming-msg", msg);
 
-    if (msg) {
-      let newMessage = await MessageModel.create({
-        sender_id: msg.sender_id,
-        receiver_id: msg.receiver_id,
-        room_id: msg.roomId,
-        content: msg.text,
-      });
-    }
+    let newMessage = await MessageModel.create({
+      sender_id: msg.sender_id,
+      receiver_id: msg.receiver_id,
+      room_id: msg.roomId,
+      content: msg.text,
+    });
 
-    io.to(msg.roomId).emit("receive-msg", msg);
+    io.to(msg.roomId).emit("receive-msg", newMessage);
+    socket.emit("receive-msg", newMessage);
   });
 
   socket.on("chat", (msg) => {

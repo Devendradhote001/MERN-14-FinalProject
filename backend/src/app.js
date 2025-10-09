@@ -3,6 +3,7 @@ const authRoutes = require("./routes/auth.routes");
 const postroutes = require("./routes/posts.routes");
 const usersRoutes = require("./routes/users.routes");
 const chatRoutes = require("./routes/chat.routes");
+const storyRoutes = require("./routes/story.routes");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
@@ -32,5 +33,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/post", postroutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/chats", chatRoutes);
+app.use("/api/story", storyRoutes);
 
 module.exports = app;
