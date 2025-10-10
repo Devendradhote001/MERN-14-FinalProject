@@ -2,6 +2,7 @@ const express = require("express");
 const {
   createStoryController,
   viewsStoryController,
+  getAllStoriesController,
 } = require("../controllers/story.controller");
 const authMiddleware = require("../middlewares/auth.middleware");
 const upload = require("../config/multer");
@@ -16,5 +17,6 @@ router.post(
 );
 
 router.get("/views/:id", authMiddleware, viewsStoryController);
+router.get("/stories", authMiddleware, getAllStoriesController);
 
 module.exports = router;

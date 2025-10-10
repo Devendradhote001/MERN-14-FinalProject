@@ -8,6 +8,17 @@ import { useNavigate } from "react-router";
 const App = () => {
   const dispatch = useDispatch();
 
+  const fetchUserFromGoogleAuth = async () => {
+    try {
+      let response = await axiosIntance.get("/auth/profile");
+      if (response) {
+        console.log("comes from google authentication", response);
+      }
+    } catch (error) {
+      console.log("error in google auth");
+    }
+  };
+
   useEffect(() => {
     (async () => {
       try {

@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { loginUserApi } from "../../features/actions/AuthActions";
 import { emailTemplate } from "../../../../backend/src/utils/emailTemplate";
+import { axiosIntance } from "../../config/axiosInstance";
 
 const Login = ({ setToggle }) => {
   const dispatch = useDispatch();
@@ -27,6 +28,25 @@ const Login = ({ setToggle }) => {
   const onSubmit = async (data) => {
     let res = dispatch(loginUserApi(data));
     console.log("okk");
+  };
+
+  const fetchUserFromGoogleAuth = async () => {
+    try {
+      let response = await axiosIntance.get("/auth/profile");
+      if (response) {
+        console.log("comes from google authentication", response);
+      }
+    } catch (error) {
+      console.log("error in google auth");
+    }
+  };
+
+  useEffect(() => {
+    fetchUserFromGoogleAuth();
+  }, []);
+
+  const handleGoogleAuth = async () => {
+    window.location.href = "http://localhost:3000/api/auth/google";
   };
 
   return (
@@ -74,6 +94,7 @@ const Login = ({ setToggle }) => {
           <div className="flex-grow h-px bg-zinc-700"></div>
         </div>
         <button
+          onClick={handleGoogleAuth}
           className="w-full flex items-center justify-center gap-2 text-blue-500 font-semibold mb-2"
           type="button"
         >
@@ -85,7 +106,7 @@ const Login = ({ setToggle }) => {
               fill="#fff"
             />
           </svg>
-          Log in with Facebook
+          Log in with Google
         </button>
         <div className="text-center mb-3">
           <a href="#" className="text-blue-400 text-sm font-semibold">

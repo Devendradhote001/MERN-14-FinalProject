@@ -57,7 +57,24 @@ const viewsStoryController = async (req, res) => {
   }
 };
 
+const getAllStoriesController = async () => {
+  try {
+    let allStories = await StoryModel.find({});
+
+    return res.status(200).json({
+      message: "All stories data",
+      stories: allStories,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal server error",
+      error: error,
+    });
+  }
+};
+
 module.exports = {
   createStoryController,
   viewsStoryController,
+  getAllStoriesController,
 };

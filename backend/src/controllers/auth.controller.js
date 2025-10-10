@@ -161,6 +161,7 @@ const forgotPasswordController = async (req, res) => {
   }
 };
 
+
 module.exports = {
   registerController,
   loginController,

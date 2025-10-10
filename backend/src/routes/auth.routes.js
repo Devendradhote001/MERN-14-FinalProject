@@ -8,6 +8,7 @@ const {
 const jwt = require("jsonwebtoken");
 const authMiddleware = require("../middlewares/auth.middleware");
 const UserModel = require("../models/user.model");
+const passport = require("passport");
 
 const router = express.Router();
 
@@ -60,6 +61,40 @@ router.post("/update-password/:id", async (req, res) => {
       error: error,
     });
   }
+});
+
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+router.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/api/auth/google/failed",
+  }),
+  async (req, res) => {
+    try {
+      console.log("success", req.user.displayName);
+      res.redirect("/api/auth/profile");
+    } catch (error) {
+      console.log("error in callback", error);
+    }
+  }
+);
+
+router.get("/google/failed", (req, res) => {
+  return res.status(400).json({
+    message: "Authentication failed",
+  });
+});
+
+router.get("/profile", (req, res) => {
+  if (!req.user) return res.status(401).send("Not authenticated");
+  return res.status(200).json({
+    message: "Authentication successful",
+    user: req.user,
+  });
 });
 
 router.post("/register", registerController);
